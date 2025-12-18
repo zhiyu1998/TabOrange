@@ -1,0 +1,215 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const activeTab = ref<'window' | 'group'>('window')
+const isProcessing = ref(false)
+
+const handleAIGroup = () => {
+  isProcessing.value = true
+  // TODO: 调用 AI 分组逻辑
+  setTimeout(() => {
+    isProcessing.value = false
+  }, 1000)
+}
+
+const openSettings = () => {
+  chrome.runtime.openOptionsPage()
+}
+</script>
+
+<template>
+  <div class="popup-container">
+    <!-- 一键AI分组按钮 -->
+    <button class="ai-group-btn" @click="handleAIGroup" :disabled="isProcessing">
+      <span class="play-icon"></span>
+      {{ isProcessing ? '分组中...' : '一键AI分组' }}
+    </button>
+
+    <!-- 切换选项卡 -->
+    <div class="tab-switch">
+      <button
+        class="tab-btn"
+        :class="{ active: activeTab === 'window' }"
+        @click="activeTab = 'window'"
+      >
+        当前窗口
+      </button>
+      <button
+        class="tab-btn"
+        :class="{ active: activeTab === 'group' }"
+        @click="activeTab = 'group'"
+      >
+        当前组
+      </button>
+    </div>
+
+    <!-- Logo -->
+    <div class="logo-container">
+      <div class="logo-text">A<span>i</span></div>
+      <div class="decoration"></div>
+    </div>
+
+    <!-- 底部信息 -->
+    <div class="footer">
+      <div class="version">TabOrange · V0.0.1</div>
+      <a class="settings-link" @click="openSettings">打开设置</a>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.popup-container {
+  width: 280px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+/* 一键AI分组按钮 */
+.ai-group-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #e8a0a0 0%, #d4848a 100%);
+  border: none;
+  border-radius: 25px;
+  padding: 14px 24px;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(212, 132, 138, 0.4);
+}
+
+.ai-group-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 132, 138, 0.5);
+}
+
+.ai-group-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.ai-group-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.play-icon {
+  width: 0;
+  height: 0;
+  border-left: 10px solid white;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+}
+
+/* 切换选项卡 */
+.tab-switch {
+  background: #f5f5f5;
+  border-radius: 25px;
+  padding: 4px;
+  display: flex;
+  gap: 4px;
+}
+
+.tab-btn {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 20px;
+  background: transparent;
+  color: #d4848a;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+  background: white;
+  color: #666;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tab-btn:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Logo区域 */
+.logo-container {
+  width: 140px;
+  height: 140px;
+  background: linear-gradient(135deg, #f8e8e8 0%, #f0d8d8 100%);
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(212, 132, 138, 0.2);
+}
+
+.logo-container::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  background: white;
+  border-radius: 14px;
+}
+
+.logo-text {
+  position: relative;
+  z-index: 1;
+  font-size: 72px;
+  font-weight: 300;
+  color: #c87880;
+  font-family: 'Times New Roman', serif;
+}
+
+.logo-text span {
+  font-size: 48px;
+  color: #d4848a;
+  font-weight: 400;
+}
+
+/* 装饰小方块 */
+.decoration {
+  position: absolute;
+  bottom: -5px;
+  right: -5px;
+  width: 35px;
+  height: 35px;
+  background: linear-gradient(135deg, #d4848a 0%, #c87880 100%);
+  border-radius: 8px;
+  z-index: 2;
+}
+
+/* 底部信息 */
+.footer {
+  text-align: center;
+  color: #999;
+  font-size: 13px;
+}
+
+.version {
+  margin-bottom: 6px;
+}
+
+.settings-link {
+  color: #999;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.settings-link:hover {
+  color: #d4848a;
+}
+</style>
