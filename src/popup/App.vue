@@ -1,15 +1,41 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { executeAIGrouping, type GroupingProgress } from '@/services/grouping'
 
 const activeTab = ref<'window' | 'group'>('window')
 const isProcessing = ref(false)
+const statusMessage = ref('')
+const progress = ref(0)
+const hasError = ref(false)
 
-const handleAIGroup = () => {
+const handleAIGroup = async () => {
   isProcessing.value = true
-  // TODO: 调用 AI 分组逻辑
-  setTimeout(() => {
+  hasError.value = false
+  statusMessage.value = ''
+  progress.value = 0
+
+  try {
+    await executeAIGrouping(activeTab.value, (p: GroupingProgress) => {
+      statusMessage.value = p.message
+      progress.value = p.progress || 0
+
+      if (p.status === 'error') {
+        hasError.value = true
+      }
+
+      if (p.status === 'done') {
+        // 分组完成后延迟关闭
+        setTimeout(() => {
+          window.close()
+        }, 1000)
+      }
+    })
+  } catch (error: any) {
+    hasError.value = true
+    statusMessage.value = error.message || '分组失败'
+  } finally {
     isProcessing.value = false
-  }, 1000)
+  }
 }
 
 const openSettings = () => {
@@ -21,9 +47,18 @@ const openSettings = () => {
   <div class="popup-container">
     <!-- 一键AI分组按钮 -->
     <button class="ai-group-btn" @click="handleAIGroup" :disabled="isProcessing">
-      <span class="play-icon"></span>
+      <span v-if="!isProcessing" class="play-icon"></span>
+      <span v-else class="loading-spinner"></span>
       {{ isProcessing ? '分组中...' : '一键AI分组' }}
     </button>
+
+    <!-- 进度条 -->
+    <div v-if="isProcessing || statusMessage" class="progress-section">
+      <div class="progress-bar">
+        <div class="progress-fill" :style="{ width: progress + '%' }"></div>
+      </div>
+      <p class="status-message" :class="{ error: hasError }">{{ statusMessage }}</p>
+    </div>
 
     <!-- 切换选项卡 -->
     <div class="tab-switch">
@@ -31,6 +66,7 @@ const openSettings = () => {
         class="tab-btn"
         :class="{ active: activeTab === 'window' }"
         @click="activeTab = 'window'"
+        :disabled="isProcessing"
       >
         当前窗口
       </button>
@@ -38,6 +74,7 @@ const openSettings = () => {
         class="tab-btn"
         :class="{ active: activeTab === 'group' }"
         @click="activeTab = 'group'"
+        :disabled="isProcessing"
       >
         当前组
       </button>
@@ -98,7 +135,7 @@ const openSettings = () => {
 }
 
 .ai-group-btn:disabled {
-  opacity: 0.7;
+  opacity: 0.8;
   cursor: not-allowed;
 }
 
@@ -108,6 +145,52 @@ const openSettings = () => {
   border-left: 10px solid white;
   border-top: 6px solid transparent;
   border-bottom: 6px solid transparent;
+}
+
+.loading-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 进度条区域 */
+.progress-section {
+  width: 100%;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  background: #f0f0f0;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(135deg, #e8a0a0 0%, #d4848a 100%);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.status-message {
+  text-align: center;
+  font-size: 12px;
+  color: #666;
+  margin-top: 8px;
+}
+
+.status-message.error {
+  color: #f44336;
 }
 
 /* 切换选项卡 */
@@ -136,8 +219,13 @@ const openSettings = () => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.tab-btn:hover:not(.active) {
+.tab-btn:hover:not(.active):not(:disabled) {
   background: rgba(255, 255, 255, 0.5);
+}
+
+.tab-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Logo区域 */
