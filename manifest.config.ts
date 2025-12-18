@@ -4,17 +4,18 @@ import pkg from './package.json'
 export default defineManifest({
   manifest_version: 3,
   name: 'TabOrange',
-  description: 'AI智能标签页分组管理',
+  description: 'A plugin that automatically groups tabs to solve the clutter problem in browser tabs, using OpenAI and Gemini interfaces.',
   version: pkg.version,
   icons: {
-    16: 'public/logo.png',
-    48: 'public/logo.png',
-    128: 'public/logo.png',
+    16: "public/icon16.png",
+    32: "public/icon32.png",
+    48: "public/icon48.png",
+    128: "public/icon128.png"
   },
   action: {
     default_icon: {
-      16: 'public/logo.png',
-      48: 'public/logo.png',
+      16: 'public/icon16.png',
+      48: 'public/icon48.png',
     },
     default_popup: 'src/popup/index.html',
     default_title: 'TabOrange',

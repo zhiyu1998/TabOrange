@@ -288,7 +288,7 @@ const testOpenAI = async () => {
 }
 
 .section-header {
-  background: #F6E5E9;
+  background: #FFF3E8;
   padding: 15px 20px;
   display: flex;
   justify-content: space-between;
@@ -299,7 +299,7 @@ const testOpenAI = async () => {
 }
 
 .section-header:hover {
-  background: #edd8dd;
+  background: #FFE8D5;
 }
 
 .section-title {
@@ -369,13 +369,13 @@ const testOpenAI = async () => {
 }
 
 .radio-button:hover {
-  border-color: #ffb3b3;
+  border-color: #FFC08A;
 }
 
 .radio-button.active {
-  background: #fff0f0;
-  border-color: #ffb3b3;
-  color: #ff6b6b;
+  background: #FFF3E8;
+  border-color: #FC8120;
+  color: #FC8120;
 }
 
 .input-field {
@@ -389,7 +389,7 @@ const testOpenAI = async () => {
 
 .input-field:focus {
   outline: none;
-  border-color: #ffb3b3;
+  border-color: #FC8120;
 }
 
 .hint-text {
@@ -447,7 +447,7 @@ const testOpenAI = async () => {
 }
 
 .toggle-switch input:checked + .toggle-slider {
-  background-color: #ff8a8a;
+  background-color: #FC8120;
 }
 
 .toggle-switch input:checked + .toggle-slider:before {
@@ -460,7 +460,7 @@ const testOpenAI = async () => {
   padding: 12px 20px;
   border: none;
   border-radius: 8px;
-  background: linear-gradient(135deg, #e8a0a0 0%, #d4848a 100%);
+  background: linear-gradient(135deg, #FFA54F 0%, #FC8120 100%);
   color: white;
   font-size: 14px;
   font-weight: 500;
@@ -474,7 +474,7 @@ const testOpenAI = async () => {
 
 .test-btn:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(212, 132, 138, 0.4);
+  box-shadow: 0 4px 12px rgba(252, 129, 32, 0.4);
 }
 
 .test-btn:disabled {
@@ -487,7 +487,7 @@ const testOpenAI = async () => {
 }
 
 .test-btn.error {
-  background: linear-gradient(135deg, #e8a0a0 0%, #d4848a 100%);
+  background: linear-gradient(135deg, #FFA54F 0%, #FC8120 100%);
 }
 
 .loading-spinner {

@@ -82,8 +82,7 @@ const openSettings = () => {
 
     <!-- Logo -->
     <div class="logo-container">
-      <div class="logo-text">A<span>i</span></div>
-      <div class="decoration"></div>
+      <img src="/icon128.png" alt="TabOrange" class="logo-img" />
     </div>
 
     <!-- 底部信息 -->
@@ -108,13 +107,12 @@ const openSettings = () => {
 
 /* 一键AI分组按钮 */
 .ai-group-btn {
-  width: 100%;
-  background: linear-gradient(135deg, #e8a0a0 0%, #d4848a 100%);
+  background: linear-gradient(135deg, #FFA54F 0%, #FC8120 100%);
   border: none;
   border-radius: 25px;
-  padding: 14px 24px;
+  padding: 12px 32px;
   color: white;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   display: flex;
@@ -122,12 +120,12 @@ const openSettings = () => {
   justify-content: center;
   gap: 8px;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(212, 132, 138, 0.4);
+  box-shadow: 0 4px 15px rgba(252, 129, 32, 0.4);
 }
 
 .ai-group-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(212, 132, 138, 0.5);
+  box-shadow: 0 6px 20px rgba(252, 129, 32, 0.5);
 }
 
 .ai-group-btn:active:not(:disabled) {
@@ -177,7 +175,7 @@ const openSettings = () => {
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(135deg, #e8a0a0 0%, #d4848a 100%);
+  background: linear-gradient(135deg, #FFA54F 0%, #FC8120 100%);
   border-radius: 2px;
   transition: width 0.3s ease;
 }
@@ -207,7 +205,7 @@ const openSettings = () => {
   border: none;
   border-radius: 20px;
   background: transparent;
-  color: #d4848a;
+  color: #FC8120;
   font-size: 14px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -230,53 +228,17 @@ const openSettings = () => {
 
 /* Logo区域 */
 .logo-container {
-  width: 140px;
-  height: 140px;
-  background: linear-gradient(135deg, #f8e8e8 0%, #f0d8d8 100%);
-  border-radius: 20px;
+  width: 120px;
+  height: 120px;
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
-  box-shadow: 0 4px 20px rgba(212, 132, 138, 0.2);
 }
 
-.logo-container::before {
-  content: '';
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  right: 8px;
-  bottom: 8px;
-  background: white;
-  border-radius: 14px;
-}
-
-.logo-text {
-  position: relative;
-  z-index: 1;
-  font-size: 72px;
-  font-weight: 300;
-  color: #c87880;
-  font-family: 'Times New Roman', serif;
-}
-
-.logo-text span {
-  font-size: 48px;
-  color: #d4848a;
-  font-weight: 400;
-}
-
-/* 装饰小方块 */
-.decoration {
-  position: absolute;
-  bottom: -5px;
-  right: -5px;
-  width: 35px;
-  height: 35px;
-  background: linear-gradient(135deg, #d4848a 0%, #c87880 100%);
-  border-radius: 8px;
-  z-index: 2;
+.logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 /* 底部信息 */
@@ -298,6 +260,6 @@ const openSettings = () => {
 }
 
 .settings-link:hover {
-  color: #d4848a;
+  color: #FC8120;
 }
 </style>
