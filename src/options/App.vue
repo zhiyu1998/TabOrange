@@ -184,46 +184,6 @@ const testOpenAI = async () => {
       </div>
     </div>
 
-    <!-- 即刻分组 -->
-    <div class="section" :class="{ collapsed: collapsedSections.instantGroup }">
-      <div class="section-header" @click="toggleSection('instantGroup')">
-        <span class="section-title">即刻分组</span>
-        <span class="section-arrow">▼</span>
-      </div>
-      <div class="section-content">
-        <p class="description">当您打开一个新的标签页时，将自动将其添加到当前组中。</p>
-
-        <div class="toggle-group">
-          <span class="toggle-label">启用即刻分组</span>
-          <label class="toggle-switch">
-            <input type="checkbox" v-model="config.instantGroup.enabled" @change="saveConfig">
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">分组命名方式</label>
-          <div class="radio-group">
-            <div
-              class="radio-button"
-              :class="{ active: config.instantGroup.namingMethod === 'fixed' }"
-              @click="config.instantGroup.namingMethod = 'fixed'; saveConfig()"
-            >
-              固定
-            </div>
-            <div
-              class="radio-button"
-              :class="{ active: config.instantGroup.namingMethod === 'rule' }"
-              @click="config.instantGroup.namingMethod = 'rule'; saveConfig()"
-            >
-              规则
-            </div>
-          </div>
-          <p class="hint-text">AI命名分组正在开发中...</p>
-        </div>
-      </div>
-    </div>
-
     <!-- AI智能分组 -->
     <div class="section" :class="{ collapsed: collapsedSections.aiGroup }">
       <div class="section-header" @click="toggleSection('aiGroup')">
@@ -232,6 +192,14 @@ const testOpenAI = async () => {
       </div>
       <div class="section-content">
         <p class="description">按您的需求，自定义AI分组的行为</p>
+
+        <div class="toggle-group">
+          <span class="toggle-label">启用即刻分组</span>
+          <label class="toggle-switch">
+            <input type="checkbox" v-model="config.instantGroup.enabled" @change="saveConfig">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
 
         <div class="toggle-group">
           <span class="toggle-label">默认不拆分已有分组</span>
