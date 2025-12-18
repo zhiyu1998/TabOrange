@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
+import OpenAI from 'openai'
 
 // 配置状态
 const config = reactive({
@@ -7,7 +8,8 @@ const config = reactive({
   openai: {
     useMethod: 'api' as 'api' | 'web',
     baseUrl: '',
-    apiKey: ''
+    apiKey: '',
+    model: 'gpt-4o-mini'
   },
   // 即刻分组
   instantGroup: {
@@ -52,6 +54,47 @@ const loadConfig = () => {
 
 // 初始化加载
 loadConfig()
+
+// 测试状态
+const testStatus = ref<'idle' | 'testing' | 'success' | 'error'>('idle')
+const testMessage = ref('')
+
+// 测试 OpenAI 连接
+const testOpenAI = async () => {
+  if (!config.openai.apiKey) {
+    testStatus.value = 'error'
+    testMessage.value = '请先填写 API Key'
+    return
+  }
+
+  testStatus.value = 'testing'
+  testMessage.value = ''
+
+  try {
+    const openai = new OpenAI({
+      apiKey: config.openai.apiKey,
+      baseURL: config.openai.baseUrl || 'https://api.openai.com/v1',
+      dangerouslyAllowBrowser: true
+    })
+
+    const response = await openai.chat.completions.create({
+      model: config.openai.model || 'gpt-4o-mini',
+      messages: [{ role: 'user', content: 'Hi' }],
+      max_tokens: 5
+    })
+
+    if (response.choices && response.choices.length > 0) {
+      testStatus.value = 'success'
+      testMessage.value = '连接成功！'
+    } else {
+      testStatus.value = 'error'
+      testMessage.value = '连接失败：无响应'
+    }
+  } catch (error: any) {
+    testStatus.value = 'error'
+    testMessage.value = `连接失败：${error.message || '未知错误'}`
+  }
+}
 </script>
 
 <template>
@@ -106,6 +149,37 @@ loadConfig()
             placeholder="输入你的API Key"
             @change="saveConfig"
           >
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">OpenAI Model</label>
+          <input
+            type="text"
+            class="input-field"
+            v-model="config.openai.model"
+            placeholder="gpt-4o-mini"
+            @change="saveConfig"
+          >
+          <p class="hint-text">默认使用 gpt-4o-mini</p>
+        </div>
+
+        <div class="form-group">
+          <button
+            class="test-btn"
+            :class="{
+              testing: testStatus === 'testing',
+              success: testStatus === 'success',
+              error: testStatus === 'error'
+            }"
+            :disabled="testStatus === 'testing'"
+            @click="testOpenAI"
+          >
+            <span v-if="testStatus === 'testing'" class="loading-spinner"></span>
+            {{ testStatus === 'testing' ? '测试中...' : '测试连接' }}
+          </button>
+          <p v-if="testMessage" class="test-message" :class="testStatus">
+            {{ testMessage }}
+          </p>
         </div>
       </div>
     </div>
@@ -378,5 +452,70 @@ loadConfig()
 
 .toggle-switch input:checked + .toggle-slider:before {
   transform: translateX(22px);
+}
+
+/* 测试按钮 */
+.test-btn {
+  width: 100%;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #e8a0a0 0%, #d4848a 100%);
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.test-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 132, 138, 0.4);
+}
+
+.test-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.test-btn.success {
+  background: linear-gradient(135deg, #a0e8a0 0%, #68c968 100%);
+}
+
+.test-btn.error {
+  background: linear-gradient(135deg, #e8a0a0 0%, #d4848a 100%);
+}
+
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.test-message {
+  margin-top: 10px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.test-message.success {
+  color: #4caf50;
+}
+
+.test-message.error {
+  color: #f44336;
 }
 </style>
