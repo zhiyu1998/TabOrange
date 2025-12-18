@@ -123,10 +123,10 @@ const testOpenAI = async () => {
               :class="{ active: config.openai.useMethod === 'web' }"
               @click="config.openai.useMethod = 'web'"
             >
-              ChatGPT 网页
+              Gemini API
             </div>
           </div>
-          <p class="hint-text">ChatGPT 网页 支持正在开发中...</p>
+          <p class="hint-text">Gemini API 支持正在开发中...</p>
         </div>
 
         <div class="form-group">
