@@ -1,0 +1,53 @@
+name: Build and Release CRX
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build-crx:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build extension
+        run: bun run build
+
+      - name: Generate CRX private key
+        run: |
+          # Use existing key from secrets or generate a new one
+          if [ -n "${{ secrets.CRX_PRIVATE_KEY }}" ]; then
+            echo "${{ secrets.CRX_PRIVATE_KEY }}" > key.pem
+          else
+            openssl genrsa -out key.pem 2048
+          fi
+
+      - name: Build CRX file
+        run: |
+          # Install crx3 tool
+          npm install -g crx3
+
+          # Create CRX from dist folder
+          crx3 dist -k key.pem -o TabOrange-${{ github.event.release.tag_name }}.crx
+
+      - name: Upload CRX to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            TabOrange-${{ github.event.release.tag_name }}.crx
+            release/*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.MINE_TOKEN }}
+
+      - name: Clean up
+        run: rm -f key.pem
