@@ -26,14 +26,11 @@
   - Ignore pinned tabs
   - Auto-collapse new groups
   - Skip single-tab groups
+- **Instant Grouping** - Automatically add new tabs to current group
 
 ### Coming Soon
 
-- **Gemini API Support** - Alternative AI provider for tab grouping
-- **ChatGPT Web Mode** - Use ChatGPT web interface instead of API
-- **Instant Grouping** - Automatically add new tabs to current group
-- **Rule-based Naming** - Custom rules for group naming
-- **AI-powered Group Naming** - Let AI suggest group names
+- [ ] **Gemini API Support** - Alternative AI provider for tab grouping
 
 ## Installation
 
