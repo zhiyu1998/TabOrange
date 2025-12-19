@@ -18,6 +18,11 @@ bun run build
 
 The build outputs to `dist/` and creates a zip file in `release/`.
 
+## Development Philosophy
+- **KISS (Keep It Simple, Stupid)**: Favor simple, readable solutions over complex abstractions
+- **YAGNI (You Aren't Gonna Need It)**: Implement features only when actually needed
+- **SOLID Principles**: Follow single responsibility per component, open for extension, and dependency inversion
+
 ## Architecture
 
 ### Extension Entry Points

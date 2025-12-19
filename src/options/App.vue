@@ -14,7 +14,8 @@ const config = reactive({
   // 即刻分组
   instantGroup: {
     enabled: true,
-    namingMethod: 'rule' as 'fixed' | 'rule'
+    namingMethod: 'rule' as 'fixed' | 'rule',
+    threshold: 10
   },
   // AI智能分组
   aiGroup: {
@@ -184,14 +185,14 @@ const testOpenAI = async () => {
       </div>
     </div>
 
-    <!-- AI智能分组 -->
-    <div class="section" :class="{ collapsed: collapsedSections.aiGroup }">
-      <div class="section-header" @click="toggleSection('aiGroup')">
-        <span class="section-title">AI智能分组</span>
+    <!-- 即刻分组 -->
+    <div class="section" :class="{ collapsed: collapsedSections.instantGroup }">
+      <div class="section-header" @click="toggleSection('instantGroup')">
+        <span class="section-title">即刻分组</span>
         <span class="section-arrow">▼</span>
       </div>
       <div class="section-content">
-        <p class="description">按您的需求，自定义AI分组的行为</p>
+        <p class="description">当您打开一个新的标签页时，将自动将其添加到当前组中。</p>
 
         <div class="toggle-group">
           <span class="toggle-label">启用即刻分组</span>
@@ -200,6 +201,30 @@ const testOpenAI = async () => {
             <span class="toggle-slider"></span>
           </label>
         </div>
+
+        <div class="form-group">
+          <label class="form-label">打开标签达到阈值进行AI分类（默认10）</label>
+          <input
+            type="number"
+            class="input-field"
+            v-model.number="config.instantGroup.threshold"
+            placeholder="10"
+            min="0"
+            @change="saveConfig"
+          >
+          <p class="hint-text">打开一定数量的标签（默认10）才会进行异步分类，否则按照域名暂时进行分类，0表示每次打开都AI分类</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI智能分组 -->
+    <div class="section" :class="{ collapsed: collapsedSections.aiGroup }">
+      <div class="section-header" @click="toggleSection('aiGroup')">
+        <span class="section-title">AI智能分组</span>
+        <span class="section-arrow">▼</span>
+      </div>
+      <div class="section-content">
+        <p class="description">按您的需求，自定义AI分组的行为</p>
 
         <div class="toggle-group">
           <span class="toggle-label">默认不拆分已有分组</span>

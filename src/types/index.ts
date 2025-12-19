@@ -52,6 +52,7 @@ export interface AppConfig {
   instantGroup: {
     enabled: boolean
     namingMethod: 'fixed' | 'rule'
+    threshold: number // default 10, 0 = always AI
   }
   aiGroup: {
     keepExistingGroups: boolean
