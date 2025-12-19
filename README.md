@@ -71,4 +71,4 @@ bun run build
 
 ## License
 
-MIT
+MIT.
