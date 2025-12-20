@@ -29,6 +29,8 @@ The build outputs to `dist/` and creates a zip file in `release/`.
 
 - **Popup** (`src/popup/`) - Main UI when clicking the extension icon, triggers AI grouping
 - **Options** (`src/options/`) - Settings page for OpenAI configuration and grouping preferences
+- **Background** (`src/background/`) - Service worker handling keyboard shortcuts, auto-grouping, and tab lifecycle
+- **Content Script** (`src/content/`) - Injected into pages for toast notifications via sweetalert2
 
 ### Core Services (`src/services/`)
 
@@ -40,15 +42,31 @@ grouping.ts  ─── Main orchestration: executeAIGrouping()
     │                 - getConfig(): Load settings from chrome.storage.sync
     │                 - requestAIGrouping(): Build prompt, call OpenAI, parse JSON response
     │
-    └── tabs.ts ───── Chrome tabs/groups API wrapper
-                      - getCurrentWindowTabs/Groups(): Query current window
-                      - prepareTabsForAI(): Filter and transform for AI prompt
-                      - createTabGroup(): Create and configure tab groups
+    ├── tabs.ts ───── Chrome tabs/groups API wrapper
+    │                 - getCurrentWindowTabs/Groups(): Query current window
+    │                 - prepareTabsForAI(): Filter and transform for AI prompt
+    │                 - createTabGroup(): Create and configure tab groups
+    │
+    └── domainNames.ts ─── Domain name simplification for display
 ```
+
+### Background Service Worker (`src/background/index.ts`)
+
+Handles:
+- **Keyboard shortcut** (`Alt+G`) - Triggers AI grouping with cooldown protection
+- **Instant grouping** - Auto-groups new tabs by domain when threshold is reached
+- **Window state tracking** - Maintains per-window state for grouping
+- **Notifications** - Sends messages to content script for toast display
+
+### Content Script (`src/content/index.ts`)
+
+- Listens for `SHOW_NOTIFICATION` messages from background
+- Displays sweetalert2 toast notifications (top-right, non-intrusive)
+- Shows grouping status: start, success, error, cooldown
 
 ### Data Flow
 
-1. User clicks "一键AI分组" → `executeAIGrouping(mode)`
+1. User clicks "一键AI分组" or presses `Alt+G` → `executeAIGrouping(mode)`
 2. Load config from `chrome.storage.sync`
 3. Get current tabs and existing groups via Chrome API
 4. Filter out system pages (`chrome://`, `chrome-extension://`) and optionally pinned tabs
@@ -63,12 +81,27 @@ Key interfaces: `TabInfo`, `GroupInfo`, `AIGroupResult`, `AppConfig`, `TabGroupC
 ## Configuration
 
 Settings stored in `chrome.storage.sync` under `config` key:
-- OpenAI: baseUrl, apiKey, model
-- AI Grouping: keepExistingGroups, ignorePinnedTabs, autoCollapseNewGroups, singleTabNoGroup
+
+| Section | Options |
+|---------|---------|
+| **OpenAI** | baseUrl, apiKey, model, useMethod (api/web) |
+| **Instant Group** | enabled, threshold (0 = always AI), namingMethod |
+| **AI Grouping** | keepExistingGroups, ignorePinnedTabs, autoCollapseNewGroups, singleTabNoGroup |
+| **Shortcut** | cooldown (seconds, default 30) |
+
+## Keyboard Shortcut
+
+- **Alt+G** - Trigger AI grouping (customizable at `chrome://extensions/shortcuts`)
+- Cooldown protection prevents accidental repeated triggers (default 30s)
+- Shows toast notifications for status feedback
 
 ## Manifest Configuration
 
-Defined in `manifest.config.ts` using CRXJS `defineManifest()`. Permissions: `tabs`, `tabGroups`, `storage`.
+Defined in `manifest.config.ts` using CRXJS `defineManifest()`.
+
+- **Permissions**: `tabs`, `tabGroups`, `storage`
+- **Commands**: `trigger-ai-grouping` (Alt+G)
+- **Content Scripts**: Injected into all URLs for notifications
 
 ## Path Alias
 
