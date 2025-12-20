@@ -87,7 +87,7 @@ const openSettings = () => {
 
     <!-- 底部信息 -->
     <div class="footer">
-      <div class="version">TabOrange · V0.0.1</div>
+      <div class="version">TabOrange · V0.0.2</div>
       <a class="settings-link" @click="openSettings">打开设置</a>
     </div>
   </div>

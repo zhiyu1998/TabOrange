@@ -203,4 +203,61 @@ chrome.tabGroups.onRemoved.addListener((group) => {
   }
 })
 
+// Send notification to active tab's content script
+async function sendNotification(
+  status: 'info' | 'success' | 'error',
+  title: string,
+  text?: string
+): Promise<void> {
+  try {
+    const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true })
+    if (activeTab?.id && !isSystemPage(activeTab.url || '')) {
+      await chrome.tabs.sendMessage(activeTab.id, {
+        type: 'SHOW_NOTIFICATION',
+        payload: { status, title, text }
+      })
+    }
+  } catch (error) {
+    // Content script may not be loaded yet, ignore
+    console.log('[TabOrange] Could not send notification:', error)
+  }
+}
+
+// Listen for keyboard shortcut commands
+chrome.commands.onCommand.addListener(async (command) => {
+  if (command === 'trigger-ai-grouping') {
+    const currentWindow = await chrome.windows.getCurrent()
+    if (currentWindow.id) {
+      const state = getWindowState(currentWindow.id)
+
+      // Check if already processing
+      if (state.isProcessing) {
+        await sendNotification('info', '分组进行中', '请稍候...')
+        return
+      }
+
+      // Show start notification
+      await sendNotification('info', '开始AI分组', '正在分析标签页...')
+
+      try {
+        state.isProcessing = true
+        console.log('[TabOrange] Triggering AI grouping for window', currentWindow.id)
+        await executeAIGrouping('window')
+        console.log('[TabOrange] AI grouping completed')
+
+        // Show success notification
+        await sendNotification('success', '分组完成', '标签页已整理完毕')
+      } catch (error: any) {
+        console.error('[TabOrange] AI grouping failed:', error)
+        // Show error notification
+        await sendNotification('error', '分组失败', error.message || '请检查设置')
+      } finally {
+        state.isProcessing = false
+        state.ungroupedCount = 0
+        state.domainGroups.clear()
+      }
+    }
+  }
+})
+
 console.log('[TabOrange] Background service worker initialized')
