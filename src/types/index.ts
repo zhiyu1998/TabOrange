@@ -60,6 +60,9 @@ export interface AppConfig {
     autoCollapseNewGroups: boolean
     singleTabNoGroup: boolean
   }
+  shortcut: {
+    cooldown: number // cooldown in seconds, default 30
+  }
 }
 
 // Chrome 标签组颜色列表

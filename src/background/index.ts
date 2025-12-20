@@ -223,6 +223,9 @@ async function sendNotification(
   }
 }
 
+// Track last shortcut trigger time for cooldown
+let lastShortcutTriggerTime = 0
+
 // Listen for keyboard shortcut commands
 chrome.commands.onCommand.addListener(async (command) => {
   if (command === 'trigger-ai-grouping') {
@@ -235,6 +238,22 @@ chrome.commands.onCommand.addListener(async (command) => {
         await sendNotification('info', '分组进行中', '请稍候...')
         return
       }
+
+      // Check cooldown
+      const config = await getConfig()
+      const cooldownSeconds = config?.shortcut?.cooldown ?? 30
+      const now = Date.now()
+      const elapsedSeconds = (now - lastShortcutTriggerTime) / 1000
+      const remainingSeconds = Math.ceil(cooldownSeconds - elapsedSeconds)
+
+      if (cooldownSeconds > 0 && elapsedSeconds < cooldownSeconds) {
+        await sendNotification('info', '冷却中', `请等待 ${remainingSeconds} 秒后再试`)
+        console.log(`[TabOrange] Shortcut cooldown: ${remainingSeconds}s remaining`)
+        return
+      }
+
+      // Update last trigger time
+      lastShortcutTriggerTime = now
 
       // Show start notification
       await sendNotification('info', '开始AI分组', '正在分析标签页...')

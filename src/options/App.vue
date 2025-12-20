@@ -23,6 +23,10 @@ const config = reactive({
     ignorePinnedTabs: true,
     autoCollapseNewGroups: false,
     singleTabNoGroup: true
+  },
+  // 快捷键设置
+  shortcut: {
+    cooldown: 30
   }
 })
 
@@ -30,7 +34,8 @@ const config = reactive({
 const collapsedSections = reactive({
   openai: false,
   instantGroup: false,
-  aiGroup: false
+  aiGroup: false,
+  shortcut: false
 })
 
 const toggleSection = (section: keyof typeof collapsedSections) => {
@@ -256,6 +261,31 @@ const testOpenAI = async () => {
             <input type="checkbox" v-model="config.aiGroup.singleTabNoGroup" @change="saveConfig">
             <span class="toggle-slider"></span>
           </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 快捷键设置 -->
+    <div class="section" :class="{ collapsed: collapsedSections.shortcut }">
+      <div class="section-header" @click="toggleSection('shortcut')">
+        <span class="section-title">快捷键设置</span>
+        <span class="section-arrow">▼</span>
+      </div>
+      <div class="section-content">
+        <p class="description">配置键盘快捷键（Alt+G）的行为</p>
+
+        <div class="form-group">
+          <label class="form-label">冷却时间（秒）</label>
+          <input
+            type="number"
+            class="input-field"
+            v-model.number="config.shortcut.cooldown"
+            placeholder="30"
+            min="0"
+            max="300"
+            @change="saveConfig"
+          >
+          <p class="hint-text">快捷键触发后的冷却时间，防止误触重复请求AI（默认30秒，0表示无冷却）</p>
         </div>
       </div>
     </div>
